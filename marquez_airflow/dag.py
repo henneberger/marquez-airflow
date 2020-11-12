@@ -450,7 +450,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
             else:
                 return get_location(task.dag.fileloc)
         except Exception:
-            log.warning('Unable to fetch the location.', exc_info=True)
+            log.warning('Failed to get task location.', exc_info=True)
             return None
 
     @staticmethod
