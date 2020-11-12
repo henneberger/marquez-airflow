@@ -380,7 +380,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
                     self.get_or_create_marquez_client().mark_job_run_as_failed(
                         run_id=marquez_job_run_id)
 
-        self.log.info(f'Marked job run(s) as {state}. {task_info}')
+            self.log.info(f"Successfully marked run as '{state}' for task '{ti.task_id}'.")
 
     def get_or_create_marquez_client(self):
         if not self._marquez_client:
