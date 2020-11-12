@@ -359,9 +359,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
                 f'Found job runs: {task_info}'
                 f'marquez_run_ids={marquez_job_run_ids} ')
 
-            state = 'UNKNOWN'
             if kwargs.get('success'):
-                state = 'COMPLETED'
                 for marquez_job_run_id in marquez_job_run_ids:
                     for task_id, task in self.task_dict.items():
                         if task_id == ti.task_id:
@@ -374,13 +372,18 @@ class DAG(airflow.models.DAG, LoggingMixin):
                                 marquez_job_run_id=marquez_job_run_id)
                     self.get_or_create_marquez_client(). \
                         mark_job_run_as_completed(run_id=marquez_job_run_id)
+                    self.log.info(
+                        f"Marked run '{marquez_job_run_id}' as COMPLETED "
+                        f"for task '{ti.task_id}'."
+                    )
             else:
-                state = 'FAILED'
                 for marquez_job_run_id in marquez_job_run_ids:
                     self.get_or_create_marquez_client().mark_job_run_as_failed(
-                        run_id=marquez_job_run_id)
-
-            self.log.info(f"Successfully marked run as '{state}' for task '{ti.task_id}'.")
+                        run_id=run_id)
+                    self.log.info(
+                        f"Marked run '{marquez_job_run_id}' as FAILED "
+                        f"for task '{ti.task_id}'."
+                    )
 
     def get_or_create_marquez_client(self):
         if not self._marquez_client:
