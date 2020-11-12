@@ -449,7 +449,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
                 return get_location(task.file_path)
             else:
                 return get_location(task.dag.fileloc)
-        except Exception as e:
+        except Exception:
             log.warning('Unable to fetch the location.', exc_info=True)
             return None
 
