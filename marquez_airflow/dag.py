@@ -379,7 +379,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
             else:
                 for marquez_job_run_id in marquez_job_run_ids:
                     self.get_or_create_marquez_client().mark_job_run_as_failed(
-                        run_id=run_id)
+                        run_id=marquez_job_run_id)
                     self.log.info(
                         f"Marked run '{marquez_job_run_id}' as FAILED "
                         f"for task '{ti.task_id}'."
