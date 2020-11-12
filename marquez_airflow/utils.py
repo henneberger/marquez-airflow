@@ -82,7 +82,10 @@ def url_to_https(url):
     return base_url
 
 
-def get_location(file_path):
+def get_location(file_path) -> str:
+    if not file_path:
+        return None
+
     # move to the file directory
     abs_path = os.path.abspath(file_path)
     file_name = os.path.basename(file_path)

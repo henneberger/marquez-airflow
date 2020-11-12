@@ -19,6 +19,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from marquez_airflow.extractors import StepMetadata
 from marquez_airflow.version import VERSION as MARQUEZ_AIRFLOW_VERSION
 from marquez_airflow.utils import (
+    get_location,
     get_connection_uri,
     add_airflow_info_to
 )
@@ -56,3 +57,8 @@ def test_add_airflow_info_to():
         assert step_metadata.context['airflow.task_info'] is not None
         assert step_metadata.context['marquez_airflow.version'] == \
             MARQUEZ_AIRFLOW_VERSION
+
+
+def test_get_location_no_file_path():
+    assert get_location(None) is None
+    assert get_location("") is None
