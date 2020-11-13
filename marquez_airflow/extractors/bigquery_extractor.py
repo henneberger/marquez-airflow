@@ -83,31 +83,28 @@ class BigQueryExtractor(BaseExtractor):
         }
         try:
             client = bigquery.Client()
-            try:
-                job = client.get_job(job_id=bigquery_job_id)
-                job_properties = job._properties
-                job_properties_str = json.dumps(job_properties)
-                context['bigquery.job_properties'] = job_properties_str
-                bq_input_tables = job_properties.get('statistics')\
-                    .get('query')\
-                    .get('referencedTables')
+            job = client.get_job(job_id=bigquery_job_id)
+            job_properties = job._properties
+            job_properties_str = json.dumps(job_properties)
+            context['bigquery.job_properties'] = job_properties_str
+            bq_input_tables = job_properties.get('statistics')\
+                .get('query')\
+                .get('referencedTables')
 
-                input_table_names = [
-                    self._bq_table_name(bq_t) for bq_t in bq_input_tables
-                ]
-                inputs = [
-                    Dataset.from_table(source, table)
-                    for table in input_table_names
-                ]
-                bq_output_table = job_properties.get('configuration')\
-                    .get('query')\
-                    .get('destinationTable')
-                output_table_name = self._bq_table_name(bq_output_table)
-                outputs = [
-                    Dataset.from_table(source, output_table_name)
-                ]
-            finally:
-                client.close()
+            input_table_names = [
+                self._bq_table_name(bq_t) for bq_t in bq_input_tables
+            ]
+            inputs = [
+                Dataset.from_table(source, table)
+                for table in input_table_names
+            ]
+            bq_output_table = job_properties.get('configuration')\
+                .get('query')\
+                .get('destinationTable')
+            output_table_name = self._bq_table_name(bq_output_table)
+            outputs = [
+                Dataset.from_table(source, output_table_name)
+            ]
         except Exception as e:
             log.error(f"Cannot retrieve job details from BigQuery.Client. {e}",
                       exc_info=True)

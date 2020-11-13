@@ -55,8 +55,6 @@ class TestBigQueryExtractorE2E(unittest.TestCase):
             .get_job.return_value \
             ._properties = job_details
 
-        mock_client.return_value.close.return_value
-
         mock.seal(mock_hook)
         mock.seal(mock_client)
 
@@ -106,8 +104,6 @@ class TestBigQueryExtractorE2E(unittest.TestCase):
         assert steps_meta[0].context['sql'] == task.sql
         assert steps_meta[0].context['bigquery.job_id'] == bq_job_id
 
-        mock_client.return_value.close.assert_called()
-
     @mock.patch('airflow.contrib.operators.bigquery_operator.BigQueryHook')
     @mock.patch('google.cloud.bigquery.Client')
     def test_extract_error(self, mock_client, mock_hook):
@@ -122,8 +118,6 @@ class TestBigQueryExtractorE2E(unittest.TestCase):
 
         mock_client.return_value \
             .get_job.side_effects = [Exception("bq error")]
-
-        mock_client.return_value.close.return_value
 
         mock.seal(mock_hook)
         mock.seal(mock_client)
@@ -168,8 +162,6 @@ class TestBigQueryExtractorE2E(unittest.TestCase):
         assert len(steps_meta[0].outputs) == 0
 
         assert steps_meta[0].context['sql'] == task.sql
-
-        mock_client.return_value.close.assert_called()
 
 
 class TestBigQueryExtractor(unittest.TestCase):
