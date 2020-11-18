@@ -147,7 +147,6 @@ class DAG(airflow.models.DAG, LoggingMixin):
                     self.get_or_create_marquez_client().mark_job_run_as_failed(
                         run_id=marquez_job_run_id)
 
-
     def handle_callback(self, *args, **kwargs):
         self.log.debug(f"handle_callback({args}, {kwargs})")
 
@@ -185,7 +184,8 @@ class DAG(airflow.models.DAG, LoggingMixin):
                             )
                         outputs = None
                         if step.outputs is not None:
-                            self.register_datasets(step.outputs, marquez_run_id)
+                            self.register_datasets(step.outputs,
+                                                   marquez_run_id)
                             outputs = self._to_dataset_ids(step.outputs)
                             self.log.info(
                                 f'outputs: {outputs} '
