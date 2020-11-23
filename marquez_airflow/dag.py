@@ -158,7 +158,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
                     job_name, dagrun.run_id, session)
                 if marquez_job_run_ids is None:
                     self.log.error(f'No runs assocated with task {ti}')
-                    continue;
+                    continue
 
                 if extractor:
                     steps_meta = add_airflow_info_to(
@@ -201,7 +201,6 @@ class DAG(airflow.models.DAG, LoggingMixin):
 
                             self.log.info(f"client.create_job(run_id="
                                           f"{marquez_run_id}) successful.")
-                self.log.info(f'runs: {marquez_job_run_ids} ti: {ti}')
                 self._handle_task_state(marquez_job_run_ids, ti)
             return
         except Exception as e:
