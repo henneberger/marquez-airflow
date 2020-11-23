@@ -106,7 +106,8 @@ class BigQueryExtractor(BaseExtractor):
                             input_table_names, client
                         )
                     ]
-                except Exception:
+                except Exception as e:
+                    log.warn(f'Could not extract schema from bigquery. {e}')
                     inputs = [
                         Dataset.from_table(source, table)
                         for table in input_table_names
@@ -143,7 +144,7 @@ class BigQueryExtractor(BaseExtractor):
 
     def _get_table(self, table: str, client: bigquery.Client) -> DbTableSchema:
         bq_table = client.get_table(table)
-        if not bq_table._properties:
+        if not bq_table or not bq_table._properties:
             return
         table = bq_table._properties
         fields = table.get('schema').get('fields')
