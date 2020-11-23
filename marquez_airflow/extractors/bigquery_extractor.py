@@ -144,9 +144,13 @@ class BigQueryExtractor(BaseExtractor):
 
     def _get_table(self, table: str, client: bigquery.Client) -> DbTableSchema:
         bq_table = client.get_table(table)
-        if not bq_table or not bq_table._properties:
+        if not bq_table._properties:
             return
         table = bq_table._properties
+
+        if not table.get('schema') or not table.get('schema').get('fields'):
+            return
+
         fields = table.get('schema').get('fields')
         columns = [DbColumn(
             name=fields[i].get('name'),
