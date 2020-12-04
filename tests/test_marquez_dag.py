@@ -313,7 +313,7 @@ def test_marquez_dag_with_extractor(mock_get_or_create_marquez_client,
                                                                  DAG_OWNER)
 
     # Datasets are updated
-    mock_marquez_client.create_source.assert_called_once_with(
+    mock_marquez_client.create_source.assert_called_with(
         'dummy_source_name',
         'DummySource',
         'http://dummy/source/url'
@@ -376,6 +376,7 @@ def test_marquez_dag_with_extractor(mock_get_or_create_marquez_client,
        'create_namespace',
        'create_source',
        'create_dataset',
+       'create_source',
        'create_dataset',
        'create_job',
        'create_job_run',
@@ -444,7 +445,9 @@ def test_marquez_dag_with_extractor(mock_get_or_create_marquez_client,
         log.info(call)
 
     assert [name for name, args, kwargs in mock_marquez_client.mock_calls] == [
+       'create_source',
        'create_dataset',  # we would expect only the output to be updated
+       'create_source',
        'create_dataset',
        'create_job',
        'mark_job_run_as_completed'

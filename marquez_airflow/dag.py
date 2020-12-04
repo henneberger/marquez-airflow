@@ -48,8 +48,6 @@ class DAG(airflow.models.DAG, LoggingMixin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._marquez_dataset_cache = {}
-        self._marquez_source_cache = {}
         self.marquez_namespace = os.getenv('MARQUEZ_NAMESPACE',
                                            _DAG_DEFAULT_NAMESPACE)
         self._job_id_mapping = JobIdMapping()
@@ -370,42 +368,36 @@ class DAG(airflow.models.DAG, LoggingMixin):
         client = self.get_or_create_marquez_client()
         for dataset in datasets:
             if isinstance(dataset, Dataset):
-                _key = f'{self.marquez_namespace}.{dataset.name}'
-                if _key not in self._marquez_dataset_cache:
-                    self.register_source(dataset.source)
-                    # NOTE: The client expects a dict when capturing
-                    # fields for a dataset. Below we translate a field
-                    # object into a dict for compatibility. Work is currently
-                    # in progress to make this step unnecessary (see:
-                    # https://github.com/MarquezProject/marquez-python/pull/89)
-                    fields = []
-                    for field in dataset.fields:
-                        fields.append({
-                            'name': field.name,
-                            'type': field.type,
-                            'tags': field.tags,
-                            'description': field.description
-                        })
-                    client.create_dataset(
-                        dataset_name=dataset.name,
-                        dataset_type=dataset.type,
-                        physical_name=dataset.name,
-                        source_name=dataset.source.name,
-                        namespace_name=self.marquez_namespace,
-                        fields=fields,
-                        run_id=marquez_job_run_id)
-                    self._marquez_dataset_cache[_key] = True
+                self.register_source(dataset.source)
+                # NOTE: The client expects a dict when capturing
+                # fields for a dataset. Below we translate a field
+                # object into a dict for compatibility. Work is currently
+                # in progress to make this step unnecessary (see:
+                # https://github.com/MarquezProject/marquez-python/pull/89)
+                fields = []
+                for field in dataset.fields:
+                    fields.append({
+                        'name': field.name,
+                        'type': field.type,
+                        'tags': field.tags,
+                        'description': field.description
+                    })
+                client.create_dataset(
+                    dataset_name=dataset.name,
+                    dataset_type=dataset.type,
+                    physical_name=dataset.name,
+                    source_name=dataset.source.name,
+                    namespace_name=self.marquez_namespace,
+                    fields=fields,
+                    run_id=marquez_job_run_id)
 
     def register_source(self, source):
         if isinstance(source, Source):
-            _key = source.name
-            if _key not in self._marquez_source_cache:
-                client = self.get_or_create_marquez_client()
-                client.create_source(
-                    source.name,
-                    source.type,
-                    source.connection_url)
-                self._marquez_source_cache[_key] = True
+            client = self.get_or_create_marquez_client()
+            client.create_source(
+                source.name,
+                source.type,
+                source.connection_url)
 
     @staticmethod
     def _to_iso_8601(dt):
