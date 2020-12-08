@@ -73,7 +73,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
                 f'Failed to record metadata: {e} '
                 f'{self._timed_log_message(create_dag_start_ms)}',
                 exc_info=True)
-        
+
         return dagrun
 
     def _register_dagrun(self, dagrun, execution_date, run_args):
@@ -208,7 +208,7 @@ class DAG(airflow.models.DAG, LoggingMixin):
             steps = extractor(task).extract_on_complete(ti)
             if steps:
                 return steps
-        
+
         return extractor(task).extract()
 
     def _get_extractor(self, task):
