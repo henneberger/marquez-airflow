@@ -143,7 +143,6 @@ class BigQueryExtractor(BaseExtractor):
             .get('destinationTable')
         output_table_name = self._bq_table_name(bq_output_table)
         table_schema = self._get_table_safely(output_table_name, client)
-        log.info(f"got: {table_schema}")
         if table_schema:
             return [Dataset.from_table_schema(
                 source=source,

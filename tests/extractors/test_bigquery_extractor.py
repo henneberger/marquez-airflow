@@ -37,9 +37,12 @@ class TestBigQueryExtractorE2E(unittest.TestCase):
     def test_extract(self, mock_client, mock_hook):
         log.info("test_extractor")
 
-        job_details = self.read_file_json("tests/extractors/job_details.json")
-        table_details = self.read_dataset_json("tests/extractors/table_details.json")
-        out_details = self.read_dataset_json("tests/extractors/out_table_details.json")
+        job_details = self.read_file_json(
+            "tests/extractors/job_details.json")
+        table_details = self.read_dataset_json(
+            "tests/extractors/table_details.json")
+        out_details = self.read_dataset_json(
+            "tests/extractors/out_table_details.json")
 
         bq_job_id = "foo.bq.job_id"
 
