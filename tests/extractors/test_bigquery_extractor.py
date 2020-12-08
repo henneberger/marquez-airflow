@@ -107,7 +107,9 @@ class TestBigQueryExtractorE2E(unittest.TestCase):
         assert steps_meta[0].outputs is not None
         assert len(steps_meta[0].outputs) == 1
         assert steps_meta[0].outputs[0].name == \
-            'bq-airflow-marquez.new_dataset.output_table'
+            'bigquery-public-data.usa_names.usa_1910_2013'
+        assert steps_meta[0].outputs[0].fields is not None
+        assert len(steps_meta[0].outputs[0].fields) == 5
         assert steps_meta[0].context['sql'] == task.sql
         assert steps_meta[0].context['bigquery.job_id'] == bq_job_id
 
